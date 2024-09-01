@@ -1,4 +1,4 @@
-package cn.tyy.t3_1;
+package cn.tyy.d11.t3_1;
 //1137. 第 N 个泰波那契数
 public class Main {
 }
