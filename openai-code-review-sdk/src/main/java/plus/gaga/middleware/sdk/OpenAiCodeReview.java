@@ -4,7 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import plus.gaga.middleware.sdk.domain.model.ChatCompletionRequest;
 import plus.gaga.middleware.sdk.domain.model.ChatCompletionSyncResponse;
 import plus.gaga.middleware.sdk.domain.model.Model;
-import plus.gaga.middleware.sdk.types.utils.BearerTokenUtils;
+import plus.gaga.middleware.sdk.types.utils.TokenUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -22,20 +22,23 @@ public class OpenAiCodeReview {
         System.out.println("测试执行");
 
         // 1. 代码检出
+
+        //输出当前提交与上一个提交之间的差异
         ProcessBuilder processBuilder = new ProcessBuilder("git", "diff", "HEAD~1", "HEAD");
+        //指定目录
         processBuilder.directory(new File("."));
-
+        //启动进程
         Process process = processBuilder.start();
-
+        //读取差异内容
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line;
-
         StringBuilder diffCode = new StringBuilder();//差异代码
         while ((line = reader.readLine()) != null) {
             diffCode.append(line);
         }
+        //进程退出码
+        int exitCode = process.waitFor();
 
-        int exitCode = process.waitFor();//进程结束符号
         System.out.println("Exited with code:" + exitCode);
 
         System.out.println("diff code：" + diffCode.toString());
@@ -47,10 +50,13 @@ public class OpenAiCodeReview {
 
     private static String codeReview(String diffCode) throws Exception {
 
+        //用户鉴权的apiKey
         String apiKeySecret = "f324acfa09bb651124bb4ba4f59485b6.JbRNoQBp4ZC8AWS4";
-        String token = BearerTokenUtils.getToken(apiKeySecret);
+        //得到token
+        String token = TokenUtils.getToken(apiKeySecret);
 
         URL url = new URL("https://open.bigmodel.cn/api/paas/v4/chat/completions");
+        //HttpURLConnection
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         connection.setRequestMethod("POST");
@@ -60,13 +66,16 @@ public class OpenAiCodeReview {
         connection.setDoOutput(true);
 
         ChatCompletionRequest chatCompletionRequest = new ChatCompletionRequest();
+        //传入所需调用的模型编码
         chatCompletionRequest.setModel(Model.GLM_4_FLASH.getCode());
-        chatCompletionRequest.setMessages(new ArrayList<ChatCompletionRequest.Prompt>() {
+
+
+        chatCompletionRequest.setMessages(new ArrayList<ChatCompletionRequest.Prompt>(){
             private static final long serialVersionUID = -7988151926241837899L;
 
             {
-                add(new ChatCompletionRequest.Prompt("user", "你是一个高级编程架构师，精通各类场景方案、架构设计和编程语言请，请您根据git diff记录，对代码做出评审。代码如下:"));
-                add(new ChatCompletionRequest.Prompt("user", diffCode));
+                add(new ChatCompletionRequest.Prompt("user","你是一个很牛逼的编程架构师，请你根据git diff记录，对以下代码做出评审。代码如下:"));
+                add(new ChatCompletionRequest.Prompt("user",diffCode));
             }
         });
 
@@ -77,6 +86,8 @@ public class OpenAiCodeReview {
 
         int responseCode = connection.getResponseCode();
         System.out.println(responseCode);
+
+
 
         BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         String inputLine;
