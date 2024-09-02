@@ -20,7 +20,11 @@ import java.util.Date;
 public class OpenAiCodeReview {
 
     public static void main(String[] args) throws Exception {
-        System.out.println("测试执行");
+        System.out.println("openai 代码评审，测试执行");
+        String token = System.getenv("GITHUB_TOKEN");
+        if (token == null || token.isEmpty()) {
+            throw new RuntimeException("token is null");
+        }
 
         // 1. 代码检出
 
@@ -47,6 +51,9 @@ public class OpenAiCodeReview {
         // 2. chatglm 代码评审
         String log = codeReview(diffCode.toString());
         System.out.println("code review：" + log);
+
+        //3.写入日志
+        writeLog(token,log);
     }
 
     private static String codeReview(String diffCode) throws Exception {
@@ -111,7 +118,7 @@ public class OpenAiCodeReview {
 
         //git操作，指定仓库
         Git git = Git.cloneRepository()
-                .setURI("")
+                .setURI("https://github.com/44271966ritian/openai-code-review-log")
                 .setDirectory(new File("repo"))
                 .setCredentialsProvider(new UsernamePasswordCredentialsProvider(token, ""))
                 .call();
@@ -146,6 +153,9 @@ public class OpenAiCodeReview {
         git.commit().setMessage("Add new file").call();
         //提交也需要账户和密码，仓库已经在git对象上指定好了，用户需要在提交时确定【为什么git也指定了用户和密码？】
         git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(token,"")).call();
+
+        //返回一个完整的路径
+        return "https://github.com/44271966ritian/openai-code-review-log/blob/master/"+dateFolderName+"/"+fileName;
     }
 
     private static String generateRandomString(int length) {
