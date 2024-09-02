@@ -16,14 +16,16 @@ public class ApiTest {
 
     public static void main(String[] args) {
         String apiKeySecret = "c78fbacd3e10118ad5649d7a54a3a163.UunYDBxpzeClvSKZ";
-        String token = BearerTokenUtils.getToken(apiKeySecret);
+        String apiKeySecret2 = "f324acfa09bb651124bb4ba4f59485b6.JbRNoQBp4ZC8AWS4";
+        String token = BearerTokenUtils.getToken(apiKeySecret2);
         System.out.println(token);
     }
 
     @Test
     public void test_http() throws IOException {
         String apiKeySecret = "c78fbacd3e10118ad5649d7a54a3a163.UunYDBxpzeClvSKZ";
-        String token = BearerTokenUtils.getToken(apiKeySecret);
+        String apiKeySecret2 = "f324acfa09bb651124bb4ba4f59485b6.JbRNoQBp4ZC8AWS4";
+        String token = BearerTokenUtils.getToken(apiKeySecret2);
 
         URL url = new URL("https://open.bigmodel.cn/api/paas/v4/chat/completions");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -47,18 +49,19 @@ public class ApiTest {
                 + "}";
 
 
+        //将内容写入到连接的输出流 中
         try(OutputStream os = connection.getOutputStream()){
             byte[] input = jsonInpuString.getBytes(StandardCharsets.UTF_8);
             os.write(input);
         }
 
         int responseCode = connection.getResponseCode();
-        System.out.println(responseCode);
+        System.out.println(responseCode);//输出响应码
 
         BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         String inputLine;
 
-        StringBuilder content = new StringBuilder();
+        StringBuilder content = new StringBuilder();//响应的主体内容
         while ((inputLine = in.readLine()) != null){
             content.append(inputLine);
         }

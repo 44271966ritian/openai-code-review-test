@@ -4,9 +4,9 @@ import java.util.List;
 
 public class ChatCompletionSyncResponse {
 
-    private List<Choice> choices;
+    private List<Choice> choices;//建议list
 
-    public static class Choice {
+    public static class Choice {//内部类，建议实体
         private Message message;
 
         public Message getMessage() {
@@ -18,7 +18,7 @@ public class ChatCompletionSyncResponse {
         }
     }
 
-    public static class Message {
+    public static class Message {//信息内部类
         private String role;
         private String content;
 

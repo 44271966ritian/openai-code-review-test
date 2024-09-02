@@ -22,6 +22,9 @@ public class BearerTokenUtils {
             .build();
 
     public static String getToken(String apiKeySecret) {
+        /**
+         * 因为 . 在正则表达式中是一个特殊字符（表示匹配任意单个字符），所以需要用双反斜杠 \\. 来对它进行转义
+         */
         String[] split = apiKeySecret.split("\\.");
         return getToken(split[0], split[1]);
     }

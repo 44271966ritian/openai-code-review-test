@@ -30,12 +30,12 @@ public class OpenAiCodeReview {
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line;
 
-        StringBuilder diffCode = new StringBuilder();
+        StringBuilder diffCode = new StringBuilder();//差异代码
         while ((line = reader.readLine()) != null) {
             diffCode.append(line);
         }
 
-        int exitCode = process.waitFor();
+        int exitCode = process.waitFor();//进程结束符号
         System.out.println("Exited with code:" + exitCode);
 
         System.out.println("diff code：" + diffCode.toString());
