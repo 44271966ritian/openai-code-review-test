@@ -47,7 +47,7 @@ public class OpenAiCodeReview {
 
     private static String codeReview(String diffCode) throws Exception {
 
-        String apiKeySecret = "c78fbacd3e10118ad5649d7a54a3a163.UunYDBxpzeClvSKZ";
+        String apiKeySecret = "f324acfa09bb651124bb4ba4f59485b6.JbRNoQBp4ZC8AWS4";
         String token = BearerTokenUtils.getToken(apiKeySecret);
 
         URL url = new URL("https://open.bigmodel.cn/api/paas/v4/chat/completions");
